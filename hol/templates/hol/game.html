@@ -4,11 +4,12 @@
 
 {% block content %}
 <div>
-    <p>Channel: {{ request.session.game_data.channel_info.title }}</p>
+    <h2>{{ channel.title }}</h2>
+    <p>Subs: {{ channel.subscribers }}</p>
 </div>
 <div>
-    {% for video in request.session.game_data.uploads %}
-    <p>{{ video.title }}</p>
+    {% for video in videos %}
+    <p>{{ video.title }}, {{ video.views }}</p>
     {% endfor %}
 </div>
 
