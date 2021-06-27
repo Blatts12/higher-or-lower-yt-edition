@@ -8,9 +8,43 @@
     <p>Subs: {{ channel.subscribers }}</p>
 </div>
 <div>
-    {% for video in videos %}
-    <p>{{ video.title }}, {{ video.views }}</p>
-    {% endfor %}
+    <div>
+        <p> {{ video_1.title }}</p>
+        <p> {{ video_1.views }}</p>
+    </div>
+    <div>
+        <p> {{ video_2.title }}</p>
+    </div>
+    <div>
+        <button id="send_higher">Higher</button>
+        <button id="send_lower">Lower</button>
+    </div>
+    <p id="result">None</p>
 </div>
 
+<script>
+    $("#send_higher").click(function () {
+        $.ajax({
+            url: "{% url 'hol:game_progress' game.game_id %}",
+            data: {
+                "progress": "higher"
+            },
+            success: function (data) {
+                document.getElementById("result").innerHTML = data["result"]
+            }
+        });
+    });
+
+    $("#send_lower").click(function () {
+        $.ajax({
+            url: "{% url 'hol:game_progress' game.game_id %}",
+            data: {
+                "progress": "lower"
+            },
+            success: function (data) {
+                document.getElementById("result").innerHTML = data["result"]
+            }
+        });
+    });
+</script>
 {% endblock content %}
