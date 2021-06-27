@@ -126,8 +126,25 @@ def game(request, game_id):
 
 
 def game_progress(request, game_id):
+
+    def check_progress(video_1, video_2):
+        if progress == "higher":
+            if video_2.views >= video_1.views:
+                return True
+            else:
+                return False
+        else:  # lower
+            if video_2.views <= video_1.views:
+                return True
+            else:
+                return False
+
     if request.method == "GET":
         game = get_object_or_404(Game, pk=game_id)
+
+        if not game.active:
+            return JsonResponse({"result": "Game ended"})
+
         progress = request.GET.get("progress")
         videos = list(game.channel.youtubevideo_set.all())
         random.seed(game_id)
@@ -140,24 +157,28 @@ def game_progress(request, game_id):
         video_1 = videos[index_1]
         video_2 = videos[index_2]
 
-        data = {}
+        if check_progress(video_1, video_2):
+            game.round += 1
+            game.points += 1
+            game.save()
 
-        if progress == "higher":
-            if video_2.views >= video_1.views:
-                data["result"] = "win"
-            else:
-                data["result"] = "lose"
-        else:  # lower
-            if video_2.views <= video_1.views:
-                data["result"] = "win"
-            else:
-                data["result"] = "lose"
+            video_1 = video_2
+            video_2 = videos[(index_2 + 1) % vid_len]
+            video_2.views = -1
 
-        video_1 = video_2
-        video_2 = videos[(index_2 + 1) % vid_len]
+            return JsonResponse({
+                "result": "win",
+                "video_1": {
+                    "title": video_1.title,
+                    "views": video_1.views,
+                },
+                "video_2": {
+                    "title": video_2.title,
+                },
+            })
 
-        json_videos = serializers.serialize("json", [video_1, video_2])
-        data["video_1"] = json_videos[0]
-        data["video_2"] = json_videos[1]
+        else:
+            game.active = False
+            game.save()
 
-        return JsonResponse(data)
+            return JsonResponse({"result": "lose"})
