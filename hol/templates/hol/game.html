@@ -14,6 +14,7 @@
     </div>
     <div>
         <p id="v2_title"> {{ video_2.title }}</p>
+        <p id="v2_views">??</p>
     </div>
     <div>
         <button id="send_higher">Higher</button>
@@ -40,6 +41,8 @@
                     document.getElementById("v1_title").innerHTML = data["video_1"]["title"]
                     document.getElementById("v1_views").innerHTML = data["video_1"]["views"]
                     document.getElementById("v2_title").innerHTML = data["video_2"]["title"]
+                } else if (result == "lose") {
+                    document.getElementById("v2_views").innerHTML = data["video_2"]["views"]
                 }
                 document.getElementById("result").innerHTML = result
             }
@@ -62,6 +65,8 @@
                     document.getElementById("v1_title").innerHTML = data["video_1"]["title"]
                     document.getElementById("v1_views").innerHTML = data["video_1"]["views"]
                     document.getElementById("v2_title").innerHTML = data["video_2"]["title"]
+                } else if (result == "lose") {
+                    document.getElementById("v2_views").innerHTML = data["video_2"]["views"]
                 }
                 document.getElementById("result").innerHTML = result
             }

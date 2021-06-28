@@ -180,4 +180,9 @@ def game_progress(request, game_id):
             game.active = False
             game.save()
 
-            return JsonResponse({"result": "lose"})
+            return JsonResponse({
+                "result": "lose",
+                "video_2": {
+                    "views": video_2.views
+                },
+            })
