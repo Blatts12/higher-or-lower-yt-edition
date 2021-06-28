@@ -22,10 +22,15 @@
     <p id="result">None</p>
 </div>
 
+{% csrf_token %}
 <script>
     $("#send_higher").click(function () {
         $.ajax({
             url: "{% url 'hol:game_progress' game.game_id %}",
+            headers: {
+                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            method: "POST",
             data: {
                 "progress": "higher"
             },
@@ -44,6 +49,10 @@
     $("#send_lower").click(function () {
         $.ajax({
             url: "{% url 'hol:game_progress' game.game_id %}",
+            headers: {
+                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            method: "POST",
             data: {
                 "progress": "lower"
             },

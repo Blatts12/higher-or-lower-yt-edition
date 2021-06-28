@@ -1,6 +1,5 @@
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
-from django.core import serializers
 from decouple import config
 import random
 import requests
@@ -139,13 +138,13 @@ def game_progress(request, game_id):
             else:
                 return False
 
-    if request.method == "GET":
+    if request.method == "POST":
         game = get_object_or_404(Game, pk=game_id)
 
         if not game.active:
             return JsonResponse({"result": "Game ended"})
 
-        progress = request.GET.get("progress")
+        progress = request.POST.get("progress")
         videos = list(game.channel.youtubevideo_set.all())
         random.seed(game_id)
         random.shuffle(videos)
