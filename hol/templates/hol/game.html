@@ -17,60 +17,40 @@
         <p id="v2_views">??</p>
     </div>
     <div>
-        <button id="send_higher">Higher</button>
-        <button id="send_lower">Lower</button>
+        <button id="higher" class="game_button">Higher</button>
+        <button id="lower" class="game_button">Lower</button>
     </div>
     <p id="result">None</p>
 </div>
 
+<input type="hidden" id="game_progress" value="none">
 {% csrf_token %}
 <script>
-    $("#send_higher").click(function () {
-        $.ajax({
-            url: "{% url 'hol:game_progress' game.game_id %}",
-            headers: {
-                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
-            },
-            method: "POST",
-            data: {
-                "progress": "higher"
-            },
-            success: function (data) {
-                result = data["result"]
-                if (result == "win") {
-                    document.getElementById("v1_title").innerHTML = data["video_1"]["title"]
-                    document.getElementById("v1_views").innerHTML = data["video_1"]["views"]
-                    document.getElementById("v2_title").innerHTML = data["video_2"]["title"]
-                } else if (result == "lose") {
-                    document.getElementById("v2_views").innerHTML = data["video_2"]["views"]
+    $(".game_button").click(function (event) {
+        current_result = $("#game_progress").val()
+        if (current_result == "win" || current_result == "none") {
+            $.ajax({
+                url: "{% url 'hol:game_progress' game.game_id %}",
+                headers: {
+                    "X-CSRFToken": $("[name=csrfmiddlewaretoken]").val()
+                },
+                method: "POST",
+                data: {
+                    "progress": event.target.id
+                },
+                success: function (data) {
+                    result = data["result"]
+                    if (result == "win") {
+                        $("#v1_title").html(data["video_1"]["title"]);
+                        $("#v1_views").html(data["video_1"]["views"]);
+                        $("#v2_title").html(data["video_2"]["title"]);
+                    } else if (result == "lose") {
+                        $("#v2_views").html(data["video_2"]["views"]);
+                    }
+                    $("#result").html(result);
                 }
-                document.getElementById("result").innerHTML = result
-            }
-        });
-    });
-
-    $("#send_lower").click(function () {
-        $.ajax({
-            url: "{% url 'hol:game_progress' game.game_id %}",
-            headers: {
-                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
-            },
-            method: "POST",
-            data: {
-                "progress": "lower"
-            },
-            success: function (data) {
-                result = data["result"]
-                if (result == "win") {
-                    document.getElementById("v1_title").innerHTML = data["video_1"]["title"]
-                    document.getElementById("v1_views").innerHTML = data["video_1"]["views"]
-                    document.getElementById("v2_title").innerHTML = data["video_2"]["title"]
-                } else if (result == "lose") {
-                    document.getElementById("v2_views").innerHTML = data["video_2"]["views"]
-                }
-                document.getElementById("result").innerHTML = result
-            }
-        });
+            });
+        }
     });
 </script>
 {% endblock content %}
