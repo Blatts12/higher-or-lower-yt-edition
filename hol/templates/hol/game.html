@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Game{% endblock title %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row text-center mt-3">
+        <div class="mx-auto" style="max-height: 200px; max-width: 200px;">
+            <img src="{{ channel.thumbnail }}" alt="Channel thumbnail" class="rounded img-fluid">
+        </div>
+        <h2>{{ channel.title }}</h2>
+        <p class="mb-2">Subs: {{ channel.subscribers }}</p>
+        <h2 id="game_points">{{ game.points }}</h2>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            <img id="v1_img" src="https://img.youtube.com/vi/{{ video_1.video_id }}/hqdefault.jpg" alt="Video thumbnail"
+                class="rounded mx-auto d-block img-fluid">
+            <p id="v1_title"> {{ video_1.title }} </p>
+            <p id="v1_views"> Views: {{ video_1.views }} </p>
+        </div>
+        <div class="col text-center">
+            <img id="v2_img" src="https://img.youtube.com/vi/{{ video_2.video_id }}/hqdefault.jpg" alt="Video thumbnail"
+                class="rounded mx-auto d-block img-fluid">
+            <p id="v2_title"> {{ video_2.title }} </p>
+            <p id="v2_views">
+                {% if game.active %}
+                Hidden
+                {% else %}
+                Views: {{ video_2.views }}
+                {% endif %}
+            </p>
+            <button id="higher" class="game_button btn btn-primary">Higher</button>
+            <button id="lower" class="game_button btn btn-primary">Lower</button>
+            <p id="result"></p>
+        </div>
+    </div>
+</div>
+
+{% if game.active %}
+<input type="hidden" id="game_progress" value="none">
+{% else %}
+<input type="hidden" id="game_progress" value="lose">
+{% endif %}
+
+{% csrf_token %}
+<script>
+    $(".game_button").click(function (event) {
+        current_result = $("#game_progress").val()
+        if (current_result == "Correct" || current_result == "none") {
+            $.ajax({
+                url: "{% url 'hol:game_progress' game.game_id %}",
+                headers: {
+                    "X-CSRFToken": $("[name=csrfmiddlewaretoken]").val()
+                },
+                method: "POST",
+                data: {
+                    "progress": event.target.id
+                },
+                success: function (data) {
+                    result = data["result"]
+                    if (result == "Correct") {
+                        $("#v1_img").attr("src", "https://img.youtube.com/vi/" + data["video_1"][
+                            "video_id"
+                        ] + "/hqdefault.jpg");
+                        $("#v1_title").html(data["video_1"]["title"]);
+                        $("#v1_views").html("Views: " + data["video_1"]["views"]);
+                        $("#v2_img").attr("src", "https://img.youtube.com/vi/" + data["video_2"][
+                            "video_id"
+                        ] + "/hqdefault.jpg");
+                        $("#v2_title").html(data["video_2"]["title"]);
+                        $("#game_points").html(data["points"]);
+                    } else if (result == "Wrong") {
+                        $("#v2_views").html("Views: " + data["video_2"]["views"]);
+                    }
+                    $("#result").html(result);
+                    $("#game_progress").val(result);
+                }
+            });
+        }
+    });
+</script>
+{% endblock content %}

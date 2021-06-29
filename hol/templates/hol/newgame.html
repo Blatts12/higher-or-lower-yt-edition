@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Create New Game{% endblock title %}
+
+{% block head %}
+<style>
+    .error {
+        color: red;
+    }
+</style>
+{% endblock head %}
+
+{% block content %}
+<div class="container">
+    <form method="post" class="mt-3">
+        {% csrf_token %}
+        <div class="mb-3">
+            {% if error_message %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ error_message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+            <label for="id_channel_id" class="form-label">Youtube channel ID:</label>
+            <input type="text" name="channel_id" maxlength="32" required="" id="id_channel_id" class="form-control">
+            <div id="channelHelp" class="form-text">Must be ID, not username</div>
+        </div>
+        <input type="submit" value="Create" class="btn btn-primary w-100">
+    </form>
+</div>
+{% endblock content %}
