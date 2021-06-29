@@ -1,5 +1,6 @@
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
+from django.utils import timezone
 from decouple import config
 import random
 import requests
@@ -93,6 +94,8 @@ def new_game(request):
                         "error_message": "Wrong channel id"
                     })
             elif youtube_channel.needs_update():
+                youtube_channel.last_update = timezone.now()
+                youtube_channel.save()
                 fetch_uploads(youtube_channel)
 
             game = Game(channel=youtube_channel)
@@ -166,12 +169,15 @@ def game_progress(request, game_id):
             video_2.views = -1
 
             return JsonResponse({
-                "result": "win",
+                "result": "Correct",
+                "points": game.points,
                 "video_1": {
+                    "video_id": video_1.video_id,
                     "title": video_1.title,
                     "views": video_1.views,
                 },
                 "video_2": {
+                    "video_id": video_2.video_id,
                     "title": video_2.title,
                 },
             })
@@ -181,7 +187,7 @@ def game_progress(request, game_id):
             game.save()
 
             return JsonResponse({
-                "result": "lose",
+                "result": "Wrong",
                 "video_2": {
                     "views": video_2.views
                 },
