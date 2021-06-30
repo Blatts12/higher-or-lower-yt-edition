@@ -166,7 +166,6 @@ def game_progress(request, game_id):
 
             video_1 = video_2
             video_2 = videos[(index_2 + 1) % vid_len]
-            video_2.views = -1
 
             return JsonResponse({
                 "result": "Correct",

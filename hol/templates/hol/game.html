@@ -2,6 +2,14 @@
 
 {% block title %}Game{% endblock title %}
 
+{% block head %}
+<style>
+    .base {
+        background-color: #292929;
+    }
+</style>
+{% endblock head %}
+
 {% block content %}
 <div class="container-fluid">
     <div class="row text-center mt-3">
@@ -13,13 +21,13 @@
         <h2 id="game_points">{{ game.points }}</h2>
     </div>
     <div class="row">
-        <div class="col text-center">
+        <div class="col text-center base pt-3">
             <img id="v1_img" src="https://img.youtube.com/vi/{{ video_1.video_id }}/hqdefault.jpg" alt="Video thumbnail"
                 class="rounded mx-auto d-block img-fluid">
             <p id="v1_title"> {{ video_1.title }} </p>
             <p id="v1_views"> Views: {{ video_1.views }} </p>
         </div>
-        <div class="col text-center">
+        <div class="col text-center base pt-3">
             <img id="v2_img" src="https://img.youtube.com/vi/{{ video_2.video_id }}/hqdefault.jpg" alt="Video thumbnail"
                 class="rounded mx-auto d-block img-fluid">
             <p id="v2_title"> {{ video_2.title }} </p>
