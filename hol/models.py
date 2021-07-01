@@ -7,7 +7,7 @@ import datetime
 class YoutubeChannel(models.Model):
     channel_id = models.CharField(max_length=64, primary_key=True)
     uploads_id = models.CharField(max_length=64, unique=True)
-    last_update = models.DateTimeField(auto_now_add=True)
+    last_update = models.DateTimeField(default=timezone.now)
     title = models.CharField(max_length=128)
     views = models.IntegerField(default=0)
     subscribers = models.IntegerField(default=0)
